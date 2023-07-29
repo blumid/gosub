@@ -12,13 +12,13 @@ const banner = `
  `
 
 // Name
-const ToolName = `gosub`
+const toolName = `gosub`
 
 // version is the current version of dnsx
 const version = `1.1`
 
 // showBanner is used to show the banner to the user
-func showBanner() {
-	gologger.Print().Msgf("%s\n", banner)
-	gologger.Print().Msgf("\t\blumid\n\n")
+func ShowBanner() {
+	gologger.Print().Msgf("%s", banner)
+	gologger.Print().Msgf("\t\tblumid - %s v%s", toolName, version)
 }

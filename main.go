@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/blumid/tools/gosub/runner"
 	"github.com/jedib0t/go-pretty/v6/progress"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
@@ -28,8 +29,8 @@ func worker(domain string, commands map[int]string, pw progress.Writer, queue ch
 
 	for i := 0; i < len(commands); i++ {
 
-		cmd := fmt.Sprintf(commands[i], domain)
-		item.runCommand(cmd)
+		// cmd := fmt.Sprintf(commands[i], domain)
+		// item.runCommand(cmd)
 		time.Sleep(time.Millisecond * 150)
 		tracker.Increment(1)
 	}
@@ -119,6 +120,7 @@ var wordlist string
 var resolver string
 var output string
 var max int
+var silent bool
 
 func main() {
 
@@ -126,8 +128,13 @@ func main() {
 	flag.StringVar(&wordlist, "w", "sort_subs12.txt", "wordlist path")
 	flag.StringVar(&resolver, "r", "resolvers.txt", "resolver path")
 	flag.IntVar(&max, "m", 5, "maximum number of Synchronized process, <=5")
+	flag.BoolVar(&silent, "s", false, "silent mode")
 
 	flag.Parse()
+
+	if !silent {
+		runner.ShowBanner()
+	}
 
 	pw := progress.NewWriter()
 	pw.SetStyle(Style())
