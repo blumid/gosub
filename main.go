@@ -87,10 +87,11 @@ func initialCommands(outdir string, wordlist string) map[int]string {
 		// gotator2 - depth 3
 		12: "gotator -silent -sub " + outdir + "/%[1]s" + "/round2 -depth 3 -mindup > " + outdir + "/%[1]s" + "/gotator2",
 
-		// dnsx
-		13: "dnsx -list " + outdir + "/%[1]s" + "/gotator -r " + resolver + " -silent -o " + outdir + "/%[1]s" + "/step3 && rm -f " + outdir + "/%[1]s" + "/gotator2",
+		// dnsx - tempararily stop deleting gotator2
+		13: "dnsx -list " + outdir + "/%[1]s" + "/gotator2 -r " + resolver + " -silent -o " + outdir + "/%[1]s" + "/step3 && rm -f " + outdir + "/%[1]s" + "/gotator",
 
-		14: "cat step3 | httpx -silent -sc -location -td -json -o " + outdir + "/%[1]s" + "/final",
+		// httpx - json file
+		14: "cat " + outdir + "/%[1]s" + "/step3 | httpx -silent -sc -location -td -json -o " + outdir + "/%[1]s" + "/final",
 	}
 
 	return commands
