@@ -7,22 +7,19 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"sync"
 	"time"
 
 	"github.com/jedib0t/go-pretty/v6/progress"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
 
-func worker(domain string, commands map[int]string, wg *sync.WaitGroup, gather map[string][]int, pw progress.Writer) {
-
+func worker(domain string, commands map[int]string, pw progress.Writer, queue chan string) {
 	var item result
 
 	tracker := progress.Tracker{Message: domain, Total: int64(len(commands)), Units: progress.UnitsDefault}
 	tracker.Reset()
 	pw.AppendTracker(&tracker)
-	// pw.SetStyle(progress.StyleDefault)
-	// progress.StyleColors.Stats = text.FgGreen
+
 	//mkdir folder for each domain
 	outdir := output + "/" + domain
 	os.MkdirAll(outdir, os.ModePerm)
@@ -30,17 +27,18 @@ func worker(domain string, commands map[int]string, wg *sync.WaitGroup, gather m
 	item.domain = domain
 
 	for i := 0; i < len(commands); i++ {
+
 		cmd := fmt.Sprintf(commands[i], domain)
 		item.runCommand(cmd)
-		gather[domain] = append(gather[domain], 1)
 		time.Sleep(time.Millisecond * 150)
 		tracker.Increment(1)
 	}
 	time.Sleep(time.Second * 2)
-	wg.Done()
+	// wg.Done()
 	if pw.LengthActive() == 0 {
 		pw.Stop()
 	}
+	<-queue
 }
 
 func (i *result) runCommand(command string) {
@@ -108,7 +106,7 @@ func Style() progress.Style {
 	}
 
 	style := progress.Style{
-		Name:       "fuck",
+		Name:       "colorful shit",
 		Colors:     stylecol,
 		Options:    progress.StyleOptionsDefault,
 		Chars:      progress.StyleCharsDefault,
@@ -120,16 +118,14 @@ func Style() progress.Style {
 var wordlist string
 var resolver string
 var output string
+var max int
 
 func main() {
-
-	gather := make(map[string][]int)
-
-	var wg sync.WaitGroup
 
 	flag.StringVar(&output, "o", "output", "output directory")
 	flag.StringVar(&wordlist, "w", "sort_subs12.txt", "wordlist path")
 	flag.StringVar(&resolver, "r", "resolvers.txt", "resolver path")
+	flag.IntVar(&max, "m", 5, "maximum number of Synchronized process, <=5")
 
 	flag.Parse()
 
@@ -140,18 +136,33 @@ func main() {
 	commands := initialCommands(output, wordlist)
 
 	sc := bufio.NewScanner(os.Stdin)
+	// initialize verified domains
+	var domains []string
 	for sc.Scan() {
 		r, _ := regexp.Compile(`^\*\.`)
 
 		if r.MatchString(sc.Text()) {
 			domain := r.ReplaceAllString(sc.Text(), "")
-			wg.Add(1)
-			go worker(domain, commands, &wg, gather, pw)
+			domains = append(domains, domain)
 		}
-
 	}
-	time.Sleep(time.Millisecond * 200)
+
+	// using buffered channel:
+	if max > 5 || max <= 0 {
+		max = 5
+	}
+	queue := make(chan string, max)
+
+	go func() {
+		for _, v := range domains {
+			queue <- v
+			// start go worker on v
+			go worker(v, commands, pw, queue)
+
+		}
+		close(queue)
+
+	}()
 	pw.Render()
-	wg.Wait()
 
 }
