@@ -1,10 +1,8 @@
 package runner
 
 import (
-	"bufio"
-	"os"
-
 	"github.com/projectdiscovery/goflags"
+	"github.com/projectdiscovery/gologger"
 	fileutil "github.com/projectdiscovery/utils/file"
 )
 
@@ -22,12 +20,14 @@ func ParseOptions() *Options {
 	flagSet := goflags.NewFlagSet()
 	flagSet.SetDescription(`gosub is a multi-thread tool that run some tools to find subdomains`)
 
-	flagSet.StringVarP(&options.Domains, "domains", "l", "", "list wildcard domains resolve (file or stdin)")
+	flagSet.StringVar(&options.Domains, "l", "", "list wildcard domains resolve (file or stdin)")
 	flagSet.StringVar(&options.Output, "o", "scopes", "output folder")
 	flagSet.StringVar(&options.Wordlist, "w", "~/BugBounty/wordlist/sort_subs12.txt", "wordlist file")
 	flagSet.StringVar(&options.Resolver, "r", "~/BugBounty/wordlist/resolvers.txt", "resolver file")
-	flagSet.IntVar(&options.Concurency, "c", 3, "maximum number of concurency process - max:5")
+	flagSet.IntVar(&options.Concurency, "c", 3, "maximum number of concurency processes - max:5")
 	flagSet.BoolVar(&options.Silent, "s", false, "silent mode - no banner")
+
+	_ = flagSet.Parse()
 	options.validateOptions()
 	return options
 }
@@ -37,16 +37,26 @@ func (options *Options) validateOptions() {
 		options.Concurency = 3
 	}
 
-	var sc *bufio.Scanner
-
-	if fileutil.FileExists(options.Wordlist) {
-		f, _ := os.Open(options.Domains)
-		sc = bufio.NewScanner(f)
-	} else if fileutil.HasStdin() {
-		sc = bufio.NewScanner(os.Stdin)
+	// validate wordlist
+	if !fileutil.FileExists(options.Wordlist) {
+		gologger.Fatal().Msg("can't find wordlist file [-w flag]")
 	}
 
-	for sc.Scan() {
+	// validate domains
+	if fileutil.FileExists(options.Domains) || fileutil.HasStdin() {
 
+	} else {
+		gologger.Fatal().Msg("can't find input [-l flag]/StdIn")
 	}
+
+	// validate resolver
+	if !fileutil.FileExists(options.Resolver) {
+		gologger.Fatal().Msg("can't find resolver file [-r flag]")
+	}
+
+	// showing banner
+	if !options.Silent {
+		ShowBanner()
+	}
+
 }
