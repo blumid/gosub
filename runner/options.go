@@ -42,7 +42,7 @@ func (options *Options) validateOptions() {
 		gologger.Fatal().Msg("can't find wordlist file [-w flag]")
 	}
 
-	// validate domains
+	// validate domains file as input
 	if fileutil.FileExists(options.Domains) || fileutil.HasStdin() {
 
 	} else {

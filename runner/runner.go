@@ -3,7 +3,6 @@ package runner
 import (
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
 	"os/exec"
 	"regexp"
@@ -27,7 +26,7 @@ func runCommand(command string) {
 	}
 }
 
-func Style() progress.Style {
+func style() progress.Style {
 	stylecol := progress.StyleColors{
 		Message: text.Colors{text.FgHiWhite},
 		Stats:   text.Colors{text.FgRed},
@@ -61,9 +60,8 @@ func (options *Options) worker(domain string, commands map[int]string, pw progre
 
 	for i := 0; i < len(commands); i++ {
 
-		// cmd := fmt.Sprintf(commands[i], domain)
-		// item.runCommand(cmd)
-		time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
+		cmd := fmt.Sprintf(commands[i], domain)
+		runCommand(cmd)
 		time.Sleep(time.Millisecond * 150)
 		tracker.Increment(1)
 	}
@@ -75,12 +73,12 @@ func (options *Options) worker(domain string, commands map[int]string, pw progre
 	<-queue
 }
 
-func Run(options *Options) error {
+func Run(options *Options) {
 
 	commands := initialCommands(options.Output, options.Wordlist, options.Resolver)
 
 	pw := progress.NewWriter()
-	pw.SetStyle(Style())
+	pw.SetStyle(style())
 	pw.SetOutputWriter(os.Stdout)
 
 	// initialize verified domains
@@ -92,10 +90,6 @@ func Run(options *Options) error {
 		sc = bufio.NewScanner(f)
 	} else if fileutil.HasStdin() {
 		sc = bufio.NewScanner(os.Stdin)
-	}
-
-	for sc.Scan() {
-
 	}
 
 	for sc.Scan() {
@@ -121,5 +115,4 @@ func Run(options *Options) error {
 
 	}()
 	pw.Render()
-	return nil
 }

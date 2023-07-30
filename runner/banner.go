@@ -16,6 +16,6 @@ const version = `1.1`
 func ShowBanner() {
 	// gologger.Print().Msgf("%s", banner)
 	// gologger.Print().Msgf("\t\tblumid - %s v%s", toolName, version)
-	fmt.Println(banner.Inline(toolName))
-	fmt.Printf("\t\tblumid - %s v%s\n", toolName, version)
+	fmt.Print(banner.Inline(toolName))
+	fmt.Printf("\tblumid - %s v%s\n\n", toolName, version)
 }
