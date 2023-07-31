@@ -1,4 +1,4 @@
-module github.com/blumid/tools/gosub
+module github.com/blumid/gosub
 
 go 1.19
 
