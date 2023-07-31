@@ -2,7 +2,7 @@ module github.com/blumid/gosub
 
 go 1.19
 
-require github.com/jedib0t/go-pretty/v6 v6.4.6
+require github.com/projectdiscovery/utils v0.0.40-0.20230627061640-8ec2b35f851c
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
@@ -26,7 +26,6 @@ require (
 	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/projectdiscovery/blackrock v0.0.1 // indirect
-	github.com/projectdiscovery/utils v0.0.40-0.20230627061640-8ec2b35f851c // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/ulikunitz/xz v0.5.11 // indirect
 	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
@@ -45,7 +44,6 @@ require (
 	github.com/projectdiscovery/goflags v0.1.12
 	github.com/projectdiscovery/gologger v1.1.11
 	github.com/rivo/uniseg v0.4.4 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	moul.io/banner v1.0.1
 )
