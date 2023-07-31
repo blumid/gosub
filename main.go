@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/blumid/tools/gosub/runner"
+	"github.com/blumid/gosub/runner"
 )
 
 func main() {
