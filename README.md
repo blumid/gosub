@@ -16,7 +16,7 @@ Accept line-delimited wild domains on stdin and execute some tools on them and s
 # Install
 
 ```
-▶ go install github.com/blumid/tools/gosub@latest
+▶ go install github.com/blumid/gosub@latest
 ```
 
 ```console
