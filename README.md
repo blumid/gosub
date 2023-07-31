@@ -1,19 +1,34 @@
 # gosub
 
-Accept line-delimited wild domains on stdin and execute some tools on them and store output in a directory which you determined using **-d** flag.
+Accept line-delimited wild domains on stdin and execute some tools on them and store output in a directory which you determined using **-o** flag.
 
-Usage example:
+<h1 align="left">
+  <img src="static/gosub_run_v1.1.PNG" alt="dnsx" width="700px"></a>
+  <br>
+</h1>
+
+# Usage
 
 ```
-▶ cat domains | gosub
+▶ cat list | gosub -w wordlist.txt -r resolver.txt -o scopes
 ```
 
-Install:
+# Install
 
 ```
 ▶ go install github.com/blumid/tools/gosub@latest
 ```
 
+```console
+Flags:
+   -l string  list wildcard domains resolve (file or stdin)
+   -o string  output folder (default "scopes")
+   -w string  wordlist file (default "~/BugBounty/wordlist/sort_subs12.txt")
+   -r string  resolver file (default "~/BugBounty/wordlist/resolvers.txt")
+   -c int     maximum number of concurency processes - max:5 (default 3)
+   -s         silent mode - no banner
+
+```
 
 
 **Notice:** you have to install below tools berfor run this tool
