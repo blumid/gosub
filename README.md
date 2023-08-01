@@ -2,21 +2,21 @@
 
 Accept line-delimited wild domains on stdin and execute some tools on them and store output in a directory which you determined using **-o** flag.
 
-<h1 align="left">
-  <img src="static/gosub_run_v1.1.PNG" alt="dnsx" width="700px"></a>
+<h1 align="center">
+  <img src="static/gosub_run_v2.jpg" alt="gosub"></a>
   <br>
 </h1>
 
 # Usage
 
 ```
-▶ cat list | gosub -w wordlist.txt -r resolver.txt -o scopes
+cat list | gosub -w wordlist.txt -r resolver.txt -o scopes
 ```
 
 # Install
 
 ```
-▶ go install github.com/blumid/gosub@latest
+go install github.com/blumid/gosub@latest
 ```
 
 ```console
