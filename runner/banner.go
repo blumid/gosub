@@ -10,7 +10,7 @@ import (
 const toolName = `gosub`
 
 // version is the current version of dnsx
-const version = `1.1`
+const version = `2.0`
 
 // showBanner is used to show the banner to the user
 func ShowBanner() {
