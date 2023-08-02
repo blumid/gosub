@@ -4,22 +4,23 @@ Accept line-delimited wild domains on stdin and execute some tools on them and s
 
 <h1 align="center">
   <img src="static/gosub_run_v2.jpg" alt="gosub"></a>
-  <br>
 </h1>
 
 # Usage
 
-```
+```bash
 cat list | gosub -w wordlist.txt -r resolver.txt -o scopes
 ```
 
 # Install
 
-```
+```bash
 go install github.com/blumid/gosub@latest
 ```
 
-```console
+<br>
+
+```yaml
 Flags:
    -l string  list wildcard domains resolve (file or stdin)
    -o string  output folder (default "scopes")
@@ -31,7 +32,7 @@ Flags:
 ```
 
 
-**Notice:** you have to install below tools berfor run this tool
+**Notice:** you have to install below tools before run this tool
 Requirement tools:
 * amass
 * subfinder
