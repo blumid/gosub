@@ -40,6 +40,4 @@ Requirement tools:
 * dnsx
 * gotator
 * anew
-
-
-
+* shuffledns
