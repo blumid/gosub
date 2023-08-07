@@ -41,3 +41,9 @@ Requirement tools:
 * gotator
 * anew
 * shuffledns
+
+
+# Map
+<h1 align="center">
+  <img src="static/Map.png" alt="gosub"></a>
+</h1>
