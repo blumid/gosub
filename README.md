@@ -1,6 +1,11 @@
 # gosub
 
-Accept line-delimited wild domains on stdin and execute some tools on them and store output in a directory which you determined using **-o** flag.
+Accept line-delimited wild domains on stdin and execute some tools on them and store output in a directory which you determined using `-o` flag.
+
+at the end you have `final` and `hidden` for each wild domain
+
+- `hidden` : contains subs which explore with random words and methods
+- `final` : contains all results
 
 <h1 align="center">
   <img src="static/gosub_run_v2.jpg" alt="gosub"></a>
