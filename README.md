@@ -4,7 +4,7 @@ Accept line-delimited wild domains on stdin and execute some tools on them and s
 
 at the end you have `final` and `hidden` for each wild domain
 
-- `hidden` : contains subs which explore with random words and methods
+- `hidden` : contains subs which have explored with random words and methods
 - `final` : contains all results
 
 <h1 align="center">
