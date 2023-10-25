@@ -4,7 +4,7 @@ func initialCommands(outdir string, wordlist string, resolver string) map[int]st
 	commands := map[int]string{
 		// round1 (final)
 		0: "assetfinder -subs-only  %[1]s | anew > " + outdir + "/%[1]s" + "/assetfinder",
-		1: "subfinder -d %[1]s -o " + outdir + "/%[1]s" + "/subfinder",
+		1: "subfinder -all -d %[1]s -o " + outdir + "/%[1]s" + "/subfinder",
 		2: "amass enum -passive -d %[1]s > " + outdir + "/%[1]s" + "/amass",
 		3: "cat " + outdir + "/%[1]s" + "/assetfinder " + outdir + "/%[1]s" + "/subfinder " + outdir + "/%[1]s" + "/amass | deduplicate --sort > " + outdir + "/%[1]s" + "/final",
 
