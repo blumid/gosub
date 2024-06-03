@@ -38,7 +38,7 @@ func main() {
 
 func displayMenu() {
 	fmt.Println("Options:")
-	fmt.Println("1. nothing")
+	fmt.Println("1. resume")
 	fmt.Println("2. targets")
 	fmt.Println("3. quit")
 	fmt.Println("Enter your choice:")
