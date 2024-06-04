@@ -8,8 +8,6 @@ import (
 	"github.com/blumid/gosub/runner"
 )
 
-var stopMenuShown bool
-
 func main() {
 
 	sigs := make(chan os.Signal, 1)
@@ -22,9 +20,9 @@ func main() {
 	go func() {
 		for {
 			<-sigs
-			if !stopMenuShown {
-				stopMenuShown = true
-				runner.DisplayMenu(stopMenuShown)
+			if runner.MenuShown {
+				runner.MenuShown = false
+				runner.DisplayMenu()
 			}
 		}
 	}()

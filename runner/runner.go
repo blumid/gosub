@@ -14,6 +14,8 @@ import (
 	fileutil "github.com/projectdiscovery/utils/file"
 )
 
+var MenuShown bool = true
+
 type result struct {
 	domain string
 }
@@ -119,11 +121,12 @@ func Run(options *Options) {
 }
 
 // phase 3:
-func DisplayMenu(stopMenuShown bool) {
+func DisplayMenu() {
+	MenuShown = false
 	fmt.Println("Options:")
-	fmt.Println("1. resume")
-	fmt.Println("2. targets")
-	fmt.Println("3. quit")
+	fmt.Println("1. Nothing")
+	fmt.Println("2. Targets")
+	fmt.Println("3. Quit")
 	fmt.Println("Enter your choice:")
 
 	reader := bufio.NewReader(os.Stdin)
@@ -134,19 +137,19 @@ func DisplayMenu(stopMenuShown bool) {
 		return
 	}
 
-	if choice == "\n" {
+	if choice == "\n" || choice == "1" {
 		fmt.Println("Continuing...")
-		stopMenuShown = false
+		MenuShown = false
 		return
 	}
 	index, err := strconv.Atoi(choice[:len(choice)-1])
 	if err != nil || index < 1 || index > 10 {
 		fmt.Println("Invalid choice. Continuing...")
-		stopMenuShown = false
+		MenuShown = false
 		return
 	}
 
-	stopMenuShown = false
+	MenuShown = false
 }
 
 func displayTargets() {
