@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,11 +18,13 @@ func main() {
 	runner.Run(options)
 
 	// Handle SIGINT
+
 	go func() {
 		for {
 			<-sigs
 			if runner.MenuShown {
 				runner.MenuShown = false
+				fmt.Println("let's display sth")
 				runner.DisplayMenu()
 			}
 		}

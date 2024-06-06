@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -18,6 +19,12 @@ var MenuShown bool = true
 
 type result struct {
 	domain string
+}
+
+type ContextWithID struct {
+	item    string
+	context context.Context
+	cancel  context.CancelFunc
 }
 
 func runCommand(command string) {
@@ -48,8 +55,9 @@ func style() progress.Style {
 	return style
 }
 
-func (options *Options) worker(domain string, commands map[int]string, pw progress.Writer, queue chan string) {
+func (options *Options) worker(domain string, pw progress.Writer, queue chan string) {
 	var item result
+	commands := initialCommands(options.Output, options.Wordlist, options.Resolver)
 
 	tracker := progress.Tracker{Message: domain, Total: int64(len(commands)), Units: progress.UnitsDefault}
 	tracker.Reset()
@@ -77,9 +85,6 @@ func (options *Options) worker(domain string, commands map[int]string, pw progre
 }
 
 func Run(options *Options) {
-
-	commands := initialCommands(options.Output, options.Wordlist, options.Resolver)
-
 	pw := progress.NewWriter()
 	pw.SetStyle(style())
 	pw.SetOutputWriter(os.Stdout)
@@ -107,17 +112,30 @@ func Run(options *Options) {
 	// using buffered channel:
 	queue := make(chan string, options.Concurency)
 
+	Contexts := make([]*ContextWithID, 0, options.Concurency)
+
 	go func() {
 		for _, v := range domains {
 			queue <- v
+
+			// make a new ctx
+			ctx, cancel := context.WithCancel(context.Background())
+			Contexts = append(Contexts, &ContextWithID{
+				item:    v,
+				context: ctx,
+				cancel:  cancel,
+			})
+
 			// start go worker on v
-			go options.worker(v, commands, pw, queue)
+			go options.worker(v, pw, queue)
 
 		}
 		close(queue)
 
 	}()
+
 	pw.Render()
+
 }
 
 // phase 3:
