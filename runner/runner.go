@@ -184,3 +184,5 @@ func displayTargets() {
 //     cancelFuncs = append(cancelFuncs, cancel)
 //     go runCommand(cmd)
 // }
+
+// I should to consider go-pretty to be able print sth in stdout.
