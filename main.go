@@ -20,14 +20,20 @@ func main() {
 	// Handle SIGINT
 
 	go func() {
-		for {
-			<-sigs
-			if runner.MenuShown {
-				runner.MenuShown = false
-				fmt.Println("let's display sth")
-				runner.DisplayMenu()
-			}
+		// for {
+		<-sigs
+
+		// Create a new os.Stdout and write the message
+		tempStdout := os.Stdout
+		os.Stdout = os.NewFile(uintptr(syscall.Stdout), "/dev/stdout")
+		defer func() { os.Stdout = tempStdout }()
+
+		if runner.MenuShown {
+			runner.MenuShown = false
+			fmt.Println("let's display sth")
+			runner.DisplayMenu()
 		}
+		// }
 	}()
 
 	// Keep the main function running
