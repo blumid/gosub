@@ -26,13 +26,14 @@ func main() {
 		// Create a new os.Stdout and write the message
 		tempStdout := os.Stdout
 		os.Stdout = os.NewFile(uintptr(syscall.Stdout), "/dev/stdout")
-		defer func() { os.Stdout = tempStdout }()
+		// defer func() { os.Stdout = tempStdout }()
 
 		if runner.MenuShown {
 			runner.MenuShown = false
 			fmt.Println("let's display sth")
 			runner.DisplayMenu()
 		}
+		os.Stdout = tempStdout
 		// }
 	}()
 
