@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/blumid/gosub/runner"
 )
@@ -14,29 +15,43 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT) // ctrl + c
 
-	options := runner.ParseOptions()
-	runner.Run(options)
-
 	// Handle SIGINT
 
 	go func() {
-		// for {
-		<-sigs
+		for {
+			<-sigs
 
-		// Create a new os.Stdout and write the message
-		tempStdout := os.Stdout
-		os.Stdout = os.NewFile(uintptr(syscall.Stdout), "/dev/stdout")
-		// defer func() { os.Stdout = tempStdout }()
+			// Save the original stdout
+			originalStdout := os.Stdout
 
-		if runner.MenuShown {
-			runner.MenuShown = false
-			fmt.Println("let's display sth")
-			runner.DisplayMenu()
+			// Create a new file for the temporary stdout
+			// tempFile, err := os.CreateTemp("", "temp_stdout")
+			// if err != nil {
+			// 	fmt.Println("Error creating temporary file:", err)
+			// 	return
+			// }
+
+			// os.Stdout = tempFile
+
+			if runner.MenuShown {
+				runner.MenuShown = false
+				fmt.Println("let's display sth")
+				runner.DisplayMenu()
+			}
+			time.Sleep(5 * time.Second)
+			// Restore the original stdout
+			os.Stdout = originalStdout
+
+			time.Sleep(5 * time.Second)
+			// os.Exit(1)
+
 		}
-		os.Stdout = tempStdout
-		// }
 	}()
 
 	// Keep the main function running
-	select {}
+	// select {}
+
+	options := runner.ParseOptions()
+	runner.Run(options)
+
 }
