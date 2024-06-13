@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"strconv"
 	"time"
 
 	"github.com/jedib0t/go-pretty/progress"
@@ -30,8 +29,7 @@ type ContextWithID struct {
 func runCommand(command string) {
 	com := exec.Command("bash", "-c", command)
 	if err := com.Run(); err != nil {
-		fmt.Println("fuck! you have an error. maybe you didn't install requirement tools.")
-		fmt.Println("error is:", err)
+		fmt.Println("runCommand() - error:", err)
 		os.Exit(1)
 	}
 }
@@ -147,25 +145,39 @@ func DisplayMenu() {
 	fmt.Println("3. Quit")
 	fmt.Println("Enter your choice:")
 
-	reader := bufio.NewReader(os.Stdin)
-	choice, _ := reader.ReadString('\n')
+	// reader := bufio.NewReader(os.Stdin)
+	// choice, _ := reader.ReadString('\n')
 
-	if choice == "2" {
-		displayTargets()
-		return
-	}
+	// var choice int
+	// _, err := fmt.Scanln(&choice)
+	// if err != nil {
+	// 	fmt.Println("Invalid input. Exiting...")
 
-	if choice == "\n" || choice == "1" {
-		fmt.Println("Continuing...")
-		MenuShown = false
-		return
-	}
-	index, err := strconv.Atoi(choice[:len(choice)-1])
-	if err != nil || index < 1 || index > 10 {
-		fmt.Println("Invalid choice. Continuing...")
-		MenuShown = false
-		return
-	}
+	// 	return
+	// }
+	// switch choice {
+	// case 1:
+	// 	fmt.Println("Stopping all goroutines and exiting...")
+	// 	// close(stopChan)
+	// case 2:
+	// 	displayTargets()
+	// }
+	// if choice == "2" {
+	// 	displayTargets()
+	// 	return
+	// }
+
+	// if choice == "\n" || choice == "1" {
+	// 	fmt.Println("Continuing...")
+	// 	MenuShown = false
+	// 	return
+	// }
+	// index, err := strconv.Atoi(choice[:len(choice)-1])
+	// if err != nil || index < 1 || index > 10 {
+	// 	fmt.Println("Invalid choice. Continuing...")
+	// 	MenuShown = false
+	// 	return
+	// }
 
 	MenuShown = false
 }
@@ -184,5 +196,3 @@ func displayTargets() {
 //     cancelFuncs = append(cancelFuncs, cancel)
 //     go runCommand(cmd)
 // }
-
-// I should to consider go-pretty to be able print sth in stdout.
