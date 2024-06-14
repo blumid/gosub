@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/jedib0t/go-pretty/progress"
@@ -15,6 +16,19 @@ import (
 )
 
 var MenuShown bool = true
+var pw progress.Writer
+
+const (
+	Black   = "\033[30m"
+	Red     = "\033[31m"
+	Green   = "\033[32m"
+	Yellow  = "\033[33m"
+	Blue    = "\033[34m"
+	Magenta = "\033[35m"
+	Cyan    = "\033[36m"
+	White   = "\033[37m"
+	Reset   = "\033[0m"
+)
 
 type result struct {
 	domain string
@@ -24,6 +38,10 @@ type ContextWithID struct {
 	item    string
 	context context.Context
 	cancel  context.CancelFunc
+}
+
+func init() {
+	pw = progress.NewWriter()
 }
 
 func runCommand(command string) {
@@ -83,7 +101,7 @@ func (options *Options) worker(domain string, pw progress.Writer, queue chan str
 }
 
 func Run(options *Options) {
-	pw := progress.NewWriter()
+	// pw := progress.NewWriter()
 	pw.SetStyle(style())
 	pw.SetOutputWriter(os.Stdout)
 
@@ -138,52 +156,66 @@ func Run(options *Options) {
 
 // phase 3:
 func DisplayMenu() {
-	MenuShown = false
-	fmt.Println("Options:")
-	fmt.Println("1. Nothing")
-	fmt.Println("2. Targets")
-	fmt.Println("3. Quit")
-	fmt.Println("Enter your choice:")
+	tempFile, err := os.CreateTemp("", "temp_stdout")
+	if err != nil {
+		fmt.Println("Error creating temporary file:", err)
+		return
+	}
+	pw.SetOutputWriter(tempFile)
 
+	clearTerminal()
+
+	options := []string{
+		Magenta + "Nothing! I just have ass's worm :)" + Reset,
+		Magenta + "delete - list" + Reset,
+		Magenta + "quit" + Reset,
+	}
+	for i, option := range options {
+		fmt.Printf("%d. %s\n", i+1, option)
+	}
+	fmt.Print("Select an option: ")
+	// Read user input
 	// reader := bufio.NewReader(os.Stdin)
-	// choice, _ := reader.ReadString('\n')
+	// input, _ := reader.ReadString('\n')
+	var input string = ""
+	fmt.Scanln(&input)
+	fmt.Printf("input is: %s,%s\n", input, "A")
 
-	// var choice int
-	// _, err := fmt.Scanln(&choice)
-	// if err != nil {
-	// 	fmt.Println("Invalid input. Exiting...")
+	// Clean up the input
+	input = strings.TrimSpace(input)
 
-	// 	return
-	// }
-	// switch choice {
-	// case 1:
-	// 	fmt.Println("Stopping all goroutines and exiting...")
-	// 	// close(stopChan)
-	// case 2:
-	// 	displayTargets()
-	// }
-	// if choice == "2" {
-	// 	displayTargets()
+	// Convert input to integer
+	// index, err := strconv.Atoi(input)
+	// if err != nil || index < 1 || index > len(options) {
+	// 	fmt.Println("Invalid option selected.")
 	// 	return
 	// }
 
-	// if choice == "\n" || choice == "1" {
-	// 	fmt.Println("Continuing...")
-	// 	MenuShown = false
-	// 	return
-	// }
-	// index, err := strconv.Atoi(choice[:len(choice)-1])
-	// if err != nil || index < 1 || index > 10 {
-	// 	fmt.Println("Invalid choice. Continuing...")
-	// 	MenuShown = false
-	// 	return
-	// }
+	switch input {
+	case "1":
+		time.Sleep(time.Millisecond * 500)
+		return
+	case "2":
+		displayTargets()
+	case "3":
+		os.Exit(1)
+	default:
+		os.Exit(2)
+	}
 
-	MenuShown = false
+	time.Sleep(time.Second * 3)
+	pw.SetOutputWriter(os.Stdout)
+	MenuShown = true
+
 }
 
 func displayTargets() {
 	fmt.Println("displaying targets...")
+}
+func clearTerminal() {
+	cmd := exec.Command("clear") // Use "cls" on Windows instead of "clear"
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }
 
 // I should to check it out this part later:
