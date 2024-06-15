@@ -7,9 +7,9 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"strings"
 	"time"
 
+	"github.com/c-bata/go-prompt"
 	"github.com/jedib0t/go-pretty/progress"
 	"github.com/jedib0t/go-pretty/text"
 	fileutil "github.com/projectdiscovery/utils/file"
@@ -164,58 +164,56 @@ func DisplayMenu() {
 	pw.SetOutputWriter(tempFile)
 
 	clearTerminal()
-
-	options := []string{
-		Magenta + "Nothing! I just have ass's worm :)" + Reset,
-		Magenta + "delete - list" + Reset,
-		Magenta + "quit" + Reset,
-	}
-	for i, option := range options {
-		fmt.Printf("%d. %s\n", i+1, option)
-	}
-	fmt.Print("Select an option: ")
-	// Read user input
-	// reader := bufio.NewReader(os.Stdin)
-	// input, _ := reader.ReadString('\n')
-	var input string = ""
-	fmt.Scanln(&input)
-	fmt.Printf("input is: %s,%s\n", input, "A")
-
-	// Clean up the input
-	input = strings.TrimSpace(input)
-
-	// Convert input to integer
-	// index, err := strconv.Atoi(input)
-	// if err != nil || index < 1 || index > len(options) {
-	// 	fmt.Println("Invalid option selected.")
-	// 	return
-	// }
-
-	switch input {
-	case "1":
-		time.Sleep(time.Millisecond * 500)
-		return
-	case "2":
-		displayTargets()
-	case "3":
-		os.Exit(1)
-	default:
-		os.Exit(2)
-	}
-
+	p := prompt.New(
+		executor,
+		completer,
+		prompt.OptionPrefix(">>> "),
+		prompt.OptionTitle("hurry! choose one:"),
+	)
+	p.Run()
 	time.Sleep(time.Second * 3)
 	pw.SetOutputWriter(os.Stdout)
 	MenuShown = true
 
 }
 
-func displayTargets() {
+func displayTargets() []prompt.Suggest {
 	fmt.Println("displaying targets...")
+	s := []prompt.Suggest{
+		{Text: "nothing", Description: "Nothing! I just have ass's worm!"},
+		{Text: "delete", Description: "delete a target"},
+		{Text: "exit", Description: "Exit the application"},
+	}
+
+	return s
 }
 func clearTerminal() {
 	cmd := exec.Command("clear") // Use "cls" on Windows instead of "clear"
 	cmd.Stdout = os.Stdout
 	cmd.Run()
+}
+
+func completer(d prompt.Document) []prompt.Suggest {
+	s := []prompt.Suggest{
+		{Text: "nothing", Description: "Nothing! I just have ass's worm!"},
+		{Text: "delete", Description: "delete a target"},
+		{Text: "exit", Description: "Exit the application"},
+	}
+	return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
+}
+
+func executor(in string) {
+	fmt.Println("Your input: " + in)
+
+	switch in {
+	case "1":
+		fmt.Println("f you!")
+	case "2":
+		displayTargets()
+	case "3":
+		os.Exit(1)
+
+	}
 }
 
 // I should to check it out this part later:

@@ -8,12 +8,6 @@ import (
 )
 
 func main() {
-	// var (
-	// 	stdout1 *os.File = os.Stdout
-	// 	stdout2 *os.File
-	// )
-	// var buf bytes.Buffer
-	// stdout2 = &buf
 
 	// Handle SIGINT
 	err := keyboard.Open()
@@ -40,7 +34,6 @@ func main() {
 
 		}
 	}()
-
 	options := runner.ParseOptions()
 	runner.Run(options)
 
