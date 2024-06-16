@@ -177,16 +177,6 @@ func DisplayMenu() {
 
 }
 
-func displayTargets() []prompt.Suggest {
-	fmt.Println("displaying targets...")
-	s := []prompt.Suggest{
-		{Text: "nothing", Description: "Nothing! I just have ass's worm!"},
-		{Text: "delete", Description: "delete a target"},
-		{Text: "exit", Description: "Exit the application"},
-	}
-
-	return s
-}
 func clearTerminal() {
 	cmd := exec.Command("clear") // Use "cls" on Windows instead of "clear"
 	cmd.Stdout = os.Stdout
@@ -199,18 +189,33 @@ func completer(d prompt.Document) []prompt.Suggest {
 		{Text: "delete", Description: "delete a target"},
 		{Text: "exit", Description: "Exit the application"},
 	}
+	s2 := []prompt.Suggest{
+		{Text: "lyft.com", Description: "delete 80%"},
+		{Text: "lyft.net", Description: "delete 65%"},
+		{Text: "lyft.gooz", Description: " delete 43%"},
+	}
+
+	cmd := d.Text
+	// in := strings.TrimSpace(cmd)
+	// blocks := strings.Split(in, " ")
+
+	if cmd == "delete " {
+		// return prompt.FilterHasPrefix(s2, "abbas", true)
+		// return prompt.FilterContains(s2, d.GetWordBeforeCursor(), true)
+		return prompt.FilterHasPrefix(s2, "delete ", true)
+	}
 	return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
 }
 
 func executor(in string) {
-	fmt.Println("Your input: " + in)
 
 	switch in {
-	case "1":
+	case "nothing":
 		fmt.Println("f you!")
-	case "2":
-		displayTargets()
-	case "3":
+		return
+	case "delete":
+
+	case "exit":
 		os.Exit(1)
 
 	}
