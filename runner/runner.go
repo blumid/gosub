@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/c-bata/go-prompt"
@@ -191,30 +192,25 @@ func completer(d prompt.Document) []prompt.Suggest {
 	}
 	s2 := []prompt.Suggest{
 		{Text: "lyft.com", Description: "delete 80%"},
-		{Text: "lyft.net", Description: "delete 65%"},
-		{Text: "lyft.gooz", Description: " delete 43%"},
+		{Text: "google.net", Description: "delete 65%"},
+		{Text: "zartzoort.gooz", Description: " delete 43%"},
 	}
 
-	cmd := d.Text
-	// in := strings.TrimSpace(cmd)
-	// blocks := strings.Split(in, " ")
-
-	if cmd == "delete " {
-		// return prompt.FilterHasPrefix(s2, "abbas", true)
-		// return prompt.FilterContains(s2, d.GetWordBeforeCursor(), true)
-		return prompt.FilterHasPrefix(s2, "delete ", true)
+	word := d.Text
+	blocks := strings.Split(word, " ")
+	if blocks[0] == "delete" {
+		return prompt.FilterHasPrefix(s2, d.GetWordBeforeCursor(), true)
 	}
 	return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
 }
 
 func executor(in string) {
 
-	switch in {
+	switch strings.Split(in, " ")[0] {
 	case "nothing":
-		fmt.Println("f you!")
 		return
 	case "delete":
-
+		fmt.Println("we should delete these: ", strings.Split(in, " ")[1:])
 	case "exit":
 		os.Exit(1)
 
