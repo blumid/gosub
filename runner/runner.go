@@ -18,6 +18,7 @@ import (
 
 var MenuShown bool = true
 var pw progress.Writer
+var Contexts []*ContextWithID
 
 const (
 	Black   = "\033[30m"
@@ -36,9 +37,10 @@ type result struct {
 }
 
 type ContextWithID struct {
-	item    string
-	context context.Context
-	cancel  context.CancelFunc
+	item     string
+	progress string
+	context  context.Context
+	cancel   context.CancelFunc
 }
 
 func init() {
@@ -129,7 +131,8 @@ func Run(options *Options) {
 	// using buffered channel:
 	queue := make(chan string, options.Concurency)
 
-	Contexts := make([]*ContextWithID, 0, options.Concurency)
+	// make a new slice of whole of contexts
+	Contexts = make([]*ContextWithID, 0, len(domains))
 
 	go func() {
 		for _, v := range domains {
@@ -138,9 +141,10 @@ func Run(options *Options) {
 			// make a new ctx
 			ctx, cancel := context.WithCancel(context.Background())
 			Contexts = append(Contexts, &ContextWithID{
-				item:    v,
-				context: ctx,
-				cancel:  cancel,
+				item:     v,
+				progress: "0",
+				context:  ctx,
+				cancel:   cancel,
 			})
 
 			// start go worker on v
@@ -168,8 +172,8 @@ func DisplayMenu() {
 	p := prompt.New(
 		executor,
 		completer,
-		prompt.OptionPrefix(">>> "),
-		prompt.OptionTitle("hurry! choose one:"),
+		prompt.OptionPrefix("gosub >>> "),
+		// prompt.OptionTitle("hurry! choose one:"),
 	)
 	p.Run()
 	time.Sleep(time.Second * 3)
@@ -190,15 +194,15 @@ func completer(d prompt.Document) []prompt.Suggest {
 		{Text: "delete", Description: "delete a target"},
 		{Text: "exit", Description: "Exit the application"},
 	}
-	s2 := []prompt.Suggest{
-		{Text: "lyft.com", Description: "delete 80%"},
-		{Text: "google.net", Description: "delete 65%"},
-		{Text: "zartzoort.gooz", Description: " delete 43%"},
-	}
 
 	word := d.Text
 	blocks := strings.Split(word, " ")
 	if blocks[0] == "delete" {
+		s2 := []prompt.Suggest{}
+		for _, v := range Contexts {
+			s2 = append(s2, prompt.Suggest{Text: v.item, Description: "%" + v.progress})
+		}
+
 		return prompt.FilterHasPrefix(s2, d.GetWordBeforeCursor(), true)
 	}
 	return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
