@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/c-bata/go-prompt"
+	"github.com/dariubs/percent"
 	"github.com/jedib0t/go-pretty/progress"
 	"github.com/jedib0t/go-pretty/text"
 	fileutil "github.com/projectdiscovery/utils/file"
@@ -38,7 +39,7 @@ type result struct {
 
 type ContextWithID struct {
 	item     string
-	progress string
+	progress float64
 	context  context.Context
 	cancel   context.CancelFunc
 }
@@ -47,10 +48,10 @@ func init() {
 	pw = progress.NewWriter()
 }
 
-func runCommand(command string) {
-	com := exec.Command("bash", "-c", command)
-	// com_test := exec.CommandContext(context.Background(),"bash", "-c", command)
-	if err := com.Run(); err != nil {
+func runCommand(ctx *context.Context, command string) {
+	// com := exec.Command("bash", "-c", command)
+	com_ctx := exec.CommandContext(*ctx, "bash", "-c", command)
+	if err := com_ctx.Run(); err != nil {
 		fmt.Println("runCommand() - error:", err)
 		os.Exit(1)
 	}
@@ -77,9 +78,20 @@ func style() progress.Style {
 
 func (options *Options) worker(domain string, pw progress.Writer, queue chan string) {
 	var item result
+	var tr int
+	// make a new ctx
+	ctx, cancel := context.WithCancel(context.Background())
+	a := &ContextWithID{item: domain,
+		progress: 0,
+		context:  ctx,
+		cancel:   cancel,
+	}
+	Contexts = append(Contexts, a)
+
 	commands := initialCommands(options.Output, options.Wordlist, options.Resolver)
 
-	tracker := progress.Tracker{Message: domain, Total: int64(len(commands)), Units: progress.UnitsDefault}
+	total := int64(len(commands))
+	tracker := progress.Tracker{Message: domain, Total: total, Units: progress.UnitsDefault}
 	tracker.Reset()
 	pw.AppendTracker(&tracker)
 
@@ -92,9 +104,13 @@ func (options *Options) worker(domain string, pw progress.Writer, queue chan str
 	for i := 0; i < len(commands); i++ {
 
 		cmd := fmt.Sprintf(commands[i], domain)
-		runCommand(cmd)
-		time.Sleep(time.Millisecond * 150)
+		runCommand(&a.context, cmd)
+		time.Sleep(time.Second * 1)
+
+		tr += 1
 		tracker.Increment(1)
+		a.progress = percent.PercentOf(tr, int(total))
+
 	}
 	time.Sleep(time.Second * 2)
 	// wg.Done()
@@ -138,16 +154,6 @@ func Run(options *Options) {
 	go func() {
 		for _, v := range domains {
 			queue <- v
-
-			// make a new ctx
-			ctx, cancel := context.WithCancel(context.Background())
-			Contexts = append(Contexts, &ContextWithID{
-				item:     v,
-				progress: "0",
-				context:  ctx,
-				cancel:   cancel,
-			})
-
 			// start go worker on v
 			go options.worker(v, pw, queue)
 
@@ -201,7 +207,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 	if blocks[0] == "delete" {
 		s2 := []prompt.Suggest{}
 		for _, v := range Contexts {
-			s2 = append(s2, prompt.Suggest{Text: v.item, Description: "%" + v.progress})
+			s2 = append(s2, prompt.Suggest{Text: v.item, Description: "%" + fmt.Sprintf("%.2f", v.progress)})
 		}
 
 		return prompt.FilterHasPrefix(s2, d.GetWordBeforeCursor(), true)

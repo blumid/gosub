@@ -15,6 +15,7 @@ require (
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/c-bata/go-prompt v0.2.6 // indirect
 	github.com/cnf/structhash v0.0.0-20201127153200-e1b16c1ebc08 // indirect
+	github.com/dariubs/percent v1.0.0 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203 // indirect
 	github.com/go-openapi/errors v0.20.3 // indirect
