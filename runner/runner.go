@@ -179,14 +179,13 @@ func DisplayMenu() {
 	p := prompt.New(
 		executor,
 		completer,
-		prompt.OptionPrefix("gosub >>> "),
+		prompt.OptionPrefix("gosub$ "),
 		// prompt.OptionTitle("hurry! choose one:"),
 	)
 	p.Run()
-	time.Sleep(time.Second * 3)
+	// time.Sleep(time.Second * 3)
 	pw.SetOutputWriter(os.Stdout)
 	MenuShown = true
-
 }
 
 func clearTerminal() {
