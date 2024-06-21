@@ -77,7 +77,7 @@ func style() progress.Style {
 }
 
 func (options *Options) worker(domain string, pw progress.Writer, queue chan string) {
-	var item result
+	// var item result
 	var tr int
 	// make a new ctx
 	ctx, cancel := context.WithCancel(context.Background())
@@ -99,7 +99,7 @@ func (options *Options) worker(domain string, pw progress.Writer, queue chan str
 	outdir := options.Output + "/" + domain
 	os.MkdirAll(outdir, os.ModePerm)
 
-	item.domain = domain
+	// item.domain = domain
 
 	for i := 0; i < len(commands); i++ {
 
@@ -218,11 +218,14 @@ func executor(in string) {
 
 	switch strings.Split(in, " ")[0] {
 	case "nothing":
+		fmt.Fprintf(os.Stdout, "\x04")
+		fmt.Fprintf(os.Stdout, "exit")
 		return
+		// fmt.Fprintf(os.Stdout, "1")
 	case "delete":
 		fmt.Println("we should delete these: ", strings.Split(in, " ")[1:])
 	case "exit":
-		os.Exit(1)
+		os.Exit(0)
 
 	}
 }
