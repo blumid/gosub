@@ -176,12 +176,19 @@ func DisplayMenu() {
 	pw.SetOutputWriter(tempFile)
 
 	clearTerminal()
+
+	// s := prompt.NewStandardInputParser()
+	// fmt.Println(s.GetWinSize().Col)
+	// fmt.Println(s.GetWinSize().Row)
+	// s.TearDown()
+
 	p := prompt.New(
 		executor,
 		completer,
 		prompt.OptionPrefix("gosub$ "),
 		// prompt.OptionTitle("hurry! choose one:"),
 	)
+
 	p.Run()
 	// time.Sleep(time.Second * 3)
 	pw.SetOutputWriter(os.Stdout)
@@ -211,6 +218,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 
 		return prompt.FilterHasPrefix(s2, d.GetWordBeforeCursor(), true)
 	}
+
 	return prompt.FilterHasPrefix(s, d.GetWordBeforeCursor(), true)
 }
 
@@ -218,10 +226,7 @@ func executor(in string) {
 
 	switch strings.Split(in, " ")[0] {
 	case "nothing":
-		fmt.Fprintf(os.Stdout, "\x04")
-		fmt.Fprintf(os.Stdout, "exit")
-		return
-		// fmt.Fprintf(os.Stdout, "1")
+		fmt.Println("use `Ctrl-D` to exit this prompt...")
 	case "delete":
 		fmt.Println("we should delete these: ", strings.Split(in, " ")[1:])
 	case "exit":
