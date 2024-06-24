@@ -23,15 +23,16 @@ var pw progress.Writer
 var Contexts []*ContextWithID
 
 const (
-	Black   = "\033[30m"
-	Red     = "\033[31m"
-	Green   = "\033[32m"
-	Yellow  = "\033[33m"
-	Blue    = "\033[34m"
-	Magenta = "\033[35m"
-	Cyan    = "\033[36m"
-	White   = "\033[37m"
-	Reset   = "\033[0m"
+	Black_Color   = "\033[30m"
+	DarkRed_Color = "\033[31m"
+	Red_Color     = "\033[91m"
+	Green_Color   = "\033[32m"
+	Yellow_Color  = "\033[33m"
+	Blue_Color    = "\033[34m"
+	Magenta_Color = "\033[35m"
+	Cyan_Color    = "\033[36m"
+	White_Color   = "\033[37m"
+	Reset_Color   = "\033[0m"
 )
 
 // type result struct {
@@ -41,12 +42,17 @@ const (
 type ContextWithID struct {
 	item     string
 	progress float64
+	canceled bool
 	context  context.Context
 	cancel   context.CancelFunc
 }
 
 func init() {
 	pw = progress.NewWriter()
+	pw.SetUpdateFrequency(time.Second)
+	pw.SetStyle(style())
+	pw.SetOutputWriter(os.Stdout)
+	// pw.ShowTime(false)
 }
 
 func runCommand(ctx *context.Context, command string) {
@@ -80,7 +86,6 @@ func style() progress.Style {
 }
 
 func (options *Options) worker(domain string, pw progress.Writer, queue chan string) {
-	// var item result
 	var tr int
 	// make a new ctx
 	ctx, cancel := context.WithCancel(context.Background())
@@ -102,8 +107,6 @@ func (options *Options) worker(domain string, pw progress.Writer, queue chan str
 	outdir := options.Output + "/" + domain
 	os.MkdirAll(outdir, os.ModePerm)
 
-	// item.domain = domain
-
 	for i := 0; i < len(commands); i++ {
 
 		cmd := fmt.Sprintf(commands[i], domain)
@@ -113,9 +116,16 @@ func (options *Options) worker(domain string, pw progress.Writer, queue chan str
 		tr += 1
 		tracker.Increment(1)
 		a.progress = percent.PercentOf(tr, int(total))
+		if a.canceled {
+
+			tracker.Message += Red_Color + " CANCELED" + Reset_Color
+			tracker.ExpectedDuration = time.Second
+			tracker.Reset()
+			break
+		}
 
 	}
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 1)
 	// wg.Done()
 	if pw.LengthActive() == 0 {
 		pw.Stop()
@@ -124,10 +134,6 @@ func (options *Options) worker(domain string, pw progress.Writer, queue chan str
 }
 
 func Run(options *Options) {
-	// pw := progress.NewWriter()
-	pw.SetStyle(style())
-	pw.SetOutputWriter(os.Stdout)
-
 	// initialize verified domains
 	var domains []string
 
@@ -210,7 +216,12 @@ func completer(d prompt.Document) []prompt.Suggest {
 	if blocks[0] == "delete" {
 		s2 := []prompt.Suggest{}
 		for _, v := range Contexts {
-			s2 = append(s2, prompt.Suggest{Text: v.item, Description: "%" + fmt.Sprintf("%.2f", v.progress)})
+			if !v.canceled {
+				s2 = append(s2, prompt.Suggest{Text: v.item, Description: "%" + fmt.Sprintf("%.2f", v.progress)})
+			} else {
+				continue
+			}
+
 		}
 
 		return prompt.FilterHasPrefix(s2, d.GetWordBeforeCursor(), true)
@@ -231,6 +242,7 @@ func executor(in string) {
 			for _, ctxWi := range Contexts {
 				if ctxWi.item == item {
 					ctxWi.cancel()
+					ctxWi.canceled = true
 					fmt.Println("canceled: ", item)
 				}
 
@@ -242,14 +254,3 @@ func executor(in string) {
 
 	}
 }
-
-// I should to check it out this part later:
-// for _, cmdArgs := range commandList {
-//     ctx, cancel := context.WithCancel(context.Background())
-//     cmd := exec.CommandContext(ctx, cmdArgs[0], cmdArgs[1:]...)
-//     cmd.Stdout = os.Stdout
-//     cmd.Stderr = os.Stderr
-//     commands = append(commands, cmd)
-//     cancelFuncs = append(cancelFuncs, cancel)
-//     go runCommand(cmd)
-// }
