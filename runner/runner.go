@@ -3,6 +3,7 @@ package runner
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -33,9 +34,9 @@ const (
 	Reset   = "\033[0m"
 )
 
-type result struct {
-	domain string
-}
+// type result struct {
+// 	domain string
+// }
 
 type ContextWithID struct {
 	item     string
@@ -51,9 +52,11 @@ func init() {
 func runCommand(ctx *context.Context, command string) {
 	// com := exec.Command("bash", "-c", command)
 	com_ctx := exec.CommandContext(*ctx, "bash", "-c", command)
-	if err := com_ctx.Run(); err != nil {
-		fmt.Println("runCommand() - error:", err)
-		os.Exit(1)
+	err := com_ctx.Run()
+	if err != nil {
+		if errors.Is(err, os.ErrProcessDone) {
+			return
+		}
 	}
 }
 
@@ -176,12 +179,6 @@ func DisplayMenu() {
 	pw.SetOutputWriter(tempFile)
 
 	clearTerminal()
-
-	// s := prompt.NewStandardInputParser()
-	// fmt.Println(s.GetWinSize().Col)
-	// fmt.Println(s.GetWinSize().Row)
-	// s.TearDown()
-
 	p := prompt.New(
 		executor,
 		completer,
@@ -228,7 +225,18 @@ func executor(in string) {
 	case "nothing":
 		fmt.Println("use `Ctrl-D` to exit this prompt...")
 	case "delete":
-		fmt.Println("we should delete these: ", strings.Split(in, " ")[1:])
+		// fmt.Println("we should delete these: ", strings.Split(in, " ")[1:])
+		items := strings.Split(in, " ")[1:]
+		for _, item := range items {
+			for _, ctxWi := range Contexts {
+				if ctxWi.item == item {
+					ctxWi.cancel()
+					fmt.Println("canceled: ", item)
+				}
+
+			}
+		}
+
 	case "exit":
 		os.Exit(0)
 
