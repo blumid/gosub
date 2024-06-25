@@ -85,7 +85,9 @@ func (options *Options) worker(domain string, pw progress.Writer, queue chan str
 	var tr int
 	// make a new ctx
 	ctx, cancel := context.WithCancel(context.Background())
-	a := &ContextWithID{item: domain,
+	a := &ContextWithID{
+		item:     domain,
+		canceled: false,
 		progress: 0,
 		context:  ctx,
 		cancel:   cancel,
@@ -246,6 +248,13 @@ func executor(in string) {
 		}
 
 	case "exit":
+		for _, ctxWi := range Contexts {
+			if !ctxWi.canceled {
+				ctxWi.cancel()
+				ctxWi.canceled = true
+			}
+		}
+		// fmt.Println("all processes canceled.bye!")
 		os.Exit(0)
 
 	}
