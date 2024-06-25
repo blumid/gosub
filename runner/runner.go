@@ -35,10 +35,6 @@ const (
 	Reset_Color   = "\033[0m"
 )
 
-// type result struct {
-// 	domain string
-// }
-
 type ContextWithID struct {
 	item     string
 	progress float64
