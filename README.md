@@ -18,9 +18,11 @@ at the end you have `final` and `hidden` for each wild domain
 cat list | gosub -w wordlist.txt -r resolver.txt -o scopes
 ```
 press `esc` key on the keyboard to show you prompt, there you can stop some domain progress.
+
+### prompt:
 <img src="static/prompt.png" alt="gosub"></a>
 
-result:
+### result:
 <img src="static/canceled_abbas3.png" alt="gosub"></a>
 
 # Install
