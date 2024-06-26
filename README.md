@@ -7,15 +7,21 @@ at the end you have `final` and `hidden` for each wild domain
 - `hidden` : contains subs which have explored with random words and methods
 - `final` : contains all results
 
-<h1 align="center">
+<!-- <h1 align="center"> -->
   <img src="static/gosub_run_v2.jpg" alt="gosub"></a>
-</h1>
+<!-- </h1> -->
+
 
 # Usage
 
 ```bash
 cat list | gosub -w wordlist.txt -r resolver.txt -o scopes
 ```
+press `esc` key on the keyboard to show you prompt, there you can stop some domain progress.
+<img src="static/prompt.png" alt="gosub"></a>
+
+result:
+<img src="static/canceled_abbas3.png" alt="gosub"></a>
 
 # Install
 
