@@ -52,7 +52,6 @@ func init() {
 }
 
 func runCommand(ctx *context.Context, command string) {
-	// com := exec.Command("bash", "-c", command)
 	com_ctx := exec.CommandContext(*ctx, "bash", "-c", command)
 	err := com_ctx.Run()
 	if err != nil {
