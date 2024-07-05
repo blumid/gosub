@@ -23,7 +23,7 @@ press `esc` key on the keyboard to show you prompt, there you can stop some doma
 <img src="static/prompt.png" alt="gosub"></a>
 
 
-inorder to get out of prompt just press `ctrl+D`.
+in order to get out the of prompt and then go to process screen just press `ctrl+D`.
 
 ### result:
 <img src="static/canceled_abbas3.png" alt="gosub"></a>
