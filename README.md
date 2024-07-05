@@ -22,6 +22,9 @@ press `esc` key on the keyboard to show you prompt, there you can stop some doma
 ### prompt:
 <img src="static/prompt.png" alt="gosub"></a>
 
+
+inorder to get out of prompt just press `ctrl+D`.
+
 ### result:
 <img src="static/canceled_abbas3.png" alt="gosub"></a>
 
